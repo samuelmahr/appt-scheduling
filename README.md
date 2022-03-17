@@ -7,7 +7,7 @@
   - Load however you know how to load a db 
 - Run `./cmd/api/main.go` to start up the API
 - Test with `http://localhost:8000`
-- Endpoints are listed in API Endpoints section below
+- API documentation is in `./docs/api.yml`
 
 ## Design Considerations & More
 ### Data Model
@@ -37,7 +37,7 @@ Path: `GET /appointments/scheduled`
 I separated available and scheduled endpoints just for code isolation purposes.
 They're very similar, but end up returning a completely different context of data set even though the properties are the same
 
-The prompt mentioned ~two ways~ the way to get appointments by only #1 below, but I added #2 because I misread!
+The prompt mentioned the method to get appointments by only #1 below, but I added #2 because I misread!
 1. by trainer
 2. by start/end for a trainer
 
@@ -49,9 +49,10 @@ If there are no params submitted, it will return all appointments
 
 The accepted time format for start/end params is`time.RFC3339`
 
-`Times returned are in UTC... It felt normal to do that than to make all times Pacific`
+Times returned are in UTC... It felt normal to do that than to make all times Pacific.
+Internally the API will validate time zone, but in communications it is in UTC
 
-Again, I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
+I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 #### Get Available Appointments
 Path: `GET /appointments/available`
@@ -64,7 +65,8 @@ The prompt mentioned the way to get available appointments:
 2. by start/end for a trainer
 
 Get available appointments was a little tricky because we know what's scheduled, but I didn't want to loop through too many times to build time slots.
-I took the unix time of start:end and used that as a way to track what timeslots are unavailable as I built the list of available timeslots
+I used the unix time of start:end for schedule appointments as a way to track what timeslots are unavailable as I built the list of available timeslots from start/end datetime.
+The available time slots should be during business hours pacific time, though the API returns UTC times.
 
 The response will use the same object as List Scheduled Appointments, except it will omit the user ID
 
@@ -82,9 +84,16 @@ My assumption is that you can list appointments that a trainer is available and 
 
 This should be relatively safe to just create any appointment, but as a safety net, there will be no double-booked appointments with the unique index set in the table
 
-Validation that it is a 30-minute time slot that starts or ends on 00 and 30 will be validated in the controller and the repo layer will insert what ever it is given
+Validations in controller:
+- 30-minute time slot
+- starts or ends on 00 and 30 
+- time is within business hours M-F
 
-Times returned are in UTC... It felt normal to do that than to make all times Pacific
+The repo layer will insert what ever it is given, which should be fair based on validations
+
+
+Times returned are in UTC... It felt normal to do that than to make all times Pacific.
+Internally the API will validate time zone, but in communications it is in UTC
 
 The accepted time format via API is `time.RFC3339`
 
@@ -106,7 +115,7 @@ Code hitting the database does have unit tests that will persist data into the t
 I prefer to ensure interactions with the database work as expected.
 
 I am only testing the repo package just for read/write sanity. Ignoring the controller package, the other packages are mostly app/config/router setup.
-I was tempted to add tests to controllers, but it got larger than expected, so I will be skipping that since the email said the prompt should only take 60-90 minutes.
+I was tempted to add tests to controllers, but it was going to take more time than I wanted
 
 Having the database running with docker compose is required.
 
@@ -116,8 +125,6 @@ In the code, you may see I have a written out query for the insert, and I am usi
 2. If I can't dynamically build a query (in a pretty manner), it's nice to use squirrel help dynamically build queries
 
 It should be straightforward overall. One query inserts unless there is a constraint, while the query gets a list of data.
-
-I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 ## Smoke Test
 Ran a smoke test, and it appeared to work as expected.
