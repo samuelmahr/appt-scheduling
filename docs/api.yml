@@ -1,0 +1,152 @@
+  openapi: 3.0.0
+  info:
+    version: "0.0.1"
+    title: Appointment Scheduling
+    description: API documentation for Appointment Scheduling
+  servers:
+    - url: http://localhost/8000/v1
+  paths:
+    /appointments:
+      post:
+        description: create appointment
+        operationId: CreateAppointment
+        tags:
+          - appointment
+        requestBody:
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - trainer_id
+                  - user_id
+                  - starts_at
+                  - ends_at
+                properties:
+                  trainer_id:
+                    type: integer
+                    format: int64
+                  user_id:
+                    type: integer
+                    format: int64
+                  starts_at:
+                    type: string
+                    format: datetime
+                    example: "2019-01-24T10:30:00-07:00"
+                  ends_at:
+                    type: string
+                    format: datetime
+                    example: "2019-01-24T11:00:00-07:00"
+        responses:
+          201:
+            description: created appointment
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/Appointment'
+    /appointments/scheduled:
+      get:
+        description: get scheduled appointments. returns all appointments or by trainer and/or time range
+        operationId: GetScheduledAppointments
+        tags:
+          - appointment
+        parameters:
+          - name: trainer_id
+            in: query
+            required: false
+            description: search by trainer_id
+            schema:
+              type: integer
+              format: int64
+          - name: starts_at
+            in: query
+            required: false
+            description: datetime range search start datetime
+            schema:
+              type: string
+              format: datetime
+              example: "2019-01-24T10:30:00-07:00"
+          - name: ends_at
+            in: query
+            required: false
+            description: datetime range search end datetime
+            schema:
+              type: string
+              format: datetime
+              example: "2019-01-24T10:30:00-07:00"
+        responses:
+          200:
+            description: A list of scheduled appointments. this will have a `user_id` in response
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Appointment'
+    /appointments/available:
+      get:
+        description: get available appointments. returns all available time slots as appointments by trainer and time range
+        operationId: GetAvailableAppointments
+        tags:
+          - appointment
+        parameters:
+          - name: trainer_id
+            in: query
+            required: false
+            description: search by trainer_id
+            schema:
+              type: integer
+              format: int64
+          - name: starts_at
+            in: query
+            required: false
+            description: datetime range search start datetime
+            schema:
+              type: string
+              format: datetime
+              example: "2019-01-24T10:30:00-07:00"
+          - name: ends_at
+            in: query
+            required: false
+            description: datetime range search end datetime
+            schema:
+              type: string
+              format: datetime
+              example: "2019-01-24T10:30:00-07:00"
+        responses:
+          200:
+            description: A list of available appointments. this will NOT have a `user_id` in response or `id`. An object in this response can be used as a request to create an appointment, just add `user_id`
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Appointment'
+  components:
+    schemas:
+      Appointment:
+        type: object
+        properties:
+          id:
+            description: unique appointment ID, only returned for scheduled appointments
+            type: integer
+            format: int64
+            example: 1
+          trainer_id:
+            description: trainer ID
+            type: integer
+            format: int64
+            example: 2
+          user_id:
+            description: user ID, only returned for scheduled appointments
+            type: integer
+            format: int64
+            example: 2
+          starts_at:
+            type: string
+            format: datetime
+            example: "2019-01-24T17:30:00Z"
+          ends_at:
+            type: string
+            format: datetime
+            example: "2019-01-24T18:00:00Z"

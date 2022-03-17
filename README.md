@@ -29,6 +29,8 @@ Due to preloading the appointment data from `appointments.json`, the pkey sequen
 Additional indexes I would consider for the future is an index on `user_id` and an index on `trainer_id`, but it's not necessary for this exercise
 
 ### API Endpoints
+API documentation is in `./docs/api.yml`. The main thing documented are happy paths, error responses are not in the docs
+
 #### Get Scheduled Appointments
 Path: `GET /appointments/scheduled`
 
