@@ -51,9 +51,15 @@ The prompt mentioned two ways to get appointments
 1. by trainer
 2. by start/end for a trainer
 
-This will only need one endpoint. It will work well as a list endpoint with query params, and based on what query params is how it's filtered when querying the database
+This will only need one endpoint. It will work well as a list endpoint with query params, and based on what query params is how it's filtered when querying the database.
 
-If there are additional query params added that are unexpected, they will be ignored. 
+If there are additional query params added that are unexpected, they will be ignored.
+
+If there are no params submitted, it will return all appointments
+
+The accepted time format for start/end params is`time.RFC3339`
+
+Again, I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 #### Create Appointment
 My assumption is that you can list appointments that a trainer is available and then pick a time slot to create an appointment.
