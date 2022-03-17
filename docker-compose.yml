@@ -8,9 +8,9 @@ services:
     environment:
       - POSTGRES_PASSWORD=Passw0rd
       - POSTGRES_USER=master
-      - POSTGRES_DB=appointments
+      - POSTGRES_DB=fitness
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "appointments", "-h", "localhost" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "fitness", "-h", "localhost" ]
       timeout: 45s
       interval: 10s
       retries: 10
@@ -21,10 +21,10 @@ services:
         condition: service_healthy
     volumes:
       - ./migrations:/migrations
-    command: ["-path=/migrations/", "-database", "postgres://master:Passw0rd@database:5432/appointments?sslmode=disable", "up"]
+    command: ["-path=/migrations/", "-database", "postgres://master:Passw0rd@database:5432/fitness?sslmode=disable", "up"]
   test_db:
     image: postgres
-    command: createdb -U master -h database appointments_test
+    command: createdb -U master -h database fitness_test
     depends_on:
       database:
         condition: service_healthy
