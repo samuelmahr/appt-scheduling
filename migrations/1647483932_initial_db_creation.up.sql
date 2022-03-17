@@ -11,3 +11,5 @@ CREATE TABLE IF NOT EXISTS scheduling.appointments -- naming is hard, just didn'
     updated_at  timestamptz not null default now(),
     canceled_at timestamptz         -- not part of prompt, but i tend to have an "archive" timestamp if record not moved to archive table
 );
+
+CREATE UNIQUE INDEX if not exists trainer_scheduled on scheduling.appointments (trainer_id, starts_at, ends_at) where canceled_at is null;
