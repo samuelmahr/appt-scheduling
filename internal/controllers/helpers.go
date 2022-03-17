@@ -10,6 +10,7 @@ import (
 )
 
 func respondError(ctx context.Context, w http.ResponseWriter, status int, message string, causer error) {
+	w.Header().Set("Content-Type", "application/json")
 	resp := map[string]interface{}{
 		"error": message,
 	}
@@ -37,13 +38,12 @@ func respondError(ctx context.Context, w http.ResponseWriter, status int, messag
 }
 
 func respondModel(ctx context.Context, w http.ResponseWriter, status int, model interface{}) {
-	w.Header().Set("Content-Type", "application/json")
-
 	b, err := json.Marshal(model)
 	if err != nil {
 		respondError(ctx, w, 500, "error generating response", err)
 	}
 
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(status)
 	_, _ = w.Write(b)
 }

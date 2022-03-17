@@ -13,3 +13,5 @@ CREATE TABLE IF NOT EXISTS scheduling.appointments -- naming is hard, just didn'
 );
 
 CREATE UNIQUE INDEX if not exists trainer_scheduled on scheduling.appointments (trainer_id, starts_at, ends_at) where canceled_at is null;
+
+ALTER SEQUENCE scheduling.appointments_id_seq RESTART WITH 1000; -- start at 1000 since we are pre-loading data

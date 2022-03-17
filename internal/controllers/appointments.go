@@ -47,6 +47,10 @@ func (a *V1AppointmentsController) CreateAppointment(w http.ResponseWriter, r *h
 	}
 
 	err = validateRequest(newAppointment)
+	if err != nil {
+		respondError(ctx, w, http.StatusBadRequest, "bad request payload, check required fields", err)
+		return
+	}
 
 	appointment, err := a.repo.CreateAppointment(ctx, newAppointment)
 	if err != nil {
@@ -79,8 +83,8 @@ func validateRequest(appointment models.AppointmentCreateRequest) error {
 func validateTimeSlot(startsAt time.Time, endsAt time.Time) error {
 	// Calling LoadLocation
 	// method with its parameter
-	loc, error := time.LoadLocation("America/Los_Angeles")
-	if error != nil {
+	loc, err := time.LoadLocation("America/Los_Angeles")
+	if err != nil {
 		return errors.New("could not load timezone location")
 	}
 

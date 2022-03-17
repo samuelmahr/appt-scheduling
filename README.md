@@ -38,6 +38,8 @@ The third additional column is just for future flexibility. Not necessarily need
 There is a unique index on `trainer_id`, `starts_at`, `ends_at` and `canceled_at = null`. 
 This unique index will be helpful when searching for a trainer's specific availability and also to prevent creating a double booked appointment.
 
+Due to preloading the appointment data from `appointments.json`, the pkey sequence may be incorrect (starting at ID 1 when it already exists) so I restarted it at 1000 for the primary key in the initial db migration
+
 Additional indexes I would consider for the future is an index on `user_id` and an index on `trainer_id`, but it's not necessary for this exercise
 
 ### Data Access
@@ -52,6 +54,11 @@ I did not add pagination to start, but if a business case required it (tables to
 
 ### API Endpoints
 #### Get Scheduled Appointments
+Path: `GET /appointments/scheduled`
+
+I separated available and scheduled endpoints just for code isolation purposes.
+They're very similar, but end up returning a completely different context of data set even though the properties are the same
+
 The prompt mentioned ~two ways~ the way to get appointments by only #1 below, but I added #2 because I misread!
 1. by trainer
 2. by start/end for a trainer
@@ -69,6 +76,11 @@ The accepted time format for start/end params is`time.RFC3339`
 Again, I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 #### Get Available Appointments
+Path: `GET /appointments/available`
+
+I separated available and scheduled endpoints just for code isolation purposes.
+They're very similar, but end up returning a completely different context of data set even though the properties are the same
+
 The prompt mentioned the way to get available appointments:
 1. by trainer
 2. by start/end for a trainer
@@ -87,6 +99,7 @@ The accepted time format for start/end params is`time.RFC3339`
 Again, I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 #### Create Appointment
+Path: `POST /appointments`
 My assumption is that you can list appointments that a trainer is available and then pick a time slot to create an appointment.
 
 This should be relatively safe to just create any appointment, but as a safety net, there will be no double-booked appointments with the unique index set in the table
@@ -98,3 +111,14 @@ Times returned are in UTC... It felt normal to do that than to make all times Pa
 The accepted time format via API is `time.RFC3339`
 
 API Response will echo the appointment that was just created
+
+For the case the time slot is already booked, it returns a db specific error in the API. If I spent more time on it, I'd fix the error handling
+
+## Smoke Test
+Ran a smoke test, and it appeared to work as expected.
+1. Call scheduled endpoint to see what is scheduled, make sure data is returned with different filters
+2. Call available endpoint to see what time slots are available (around the time slots in `appointments.json`)
+3. Call POST to create an appointment with a time slot available from #2, added user_id, and it created
+4. Called scheduled to see new appointment scheduled, it was there
+5. Called available to see the time slot is no longer available
+6. Called to create another appointment with the same time slot for same trainer and an error was returned
