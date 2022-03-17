@@ -14,10 +14,6 @@ import (
 	"time"
 )
 
-type errorTyper interface {
-	ErrorType() string
-}
-
 type V1AppointmentsController struct {
 	config *configuration.AppConfig
 	repo   repo.AppointmentsRepoType

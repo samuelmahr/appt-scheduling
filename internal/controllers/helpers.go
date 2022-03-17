@@ -9,6 +9,10 @@ import (
 	"net/http"
 )
 
+type errorTyper interface {
+	ErrorType() string
+}
+
 func respondError(ctx context.Context, w http.ResponseWriter, status int, message string, causer error) {
 	w.Header().Set("Content-Type", "application/json")
 	resp := map[string]interface{}{
