@@ -16,12 +16,13 @@ In a larger service, there may be multiple objects that would make this project 
 It's a little overkill for this project, but it can be expanded on just for fun (add users table, trainers table, etc)
 
 ### Testing
-Unit tests mock most interfaces except for code that actually accesses data (`repo` package)
+Normally I would have unit tests mock most interfaces except for code that actually accesses data (`repo` package)
 
 Code hitting the database does have unit tests that will persist data into the table.
 I prefer to ensure interactions with the database work as expected.
 
-I am only testing the controller package and repo package. The other packages are mostly app/config/router setup.
+I am only testing the repo package just for read/write sanity. Ignoring the controller package, the other packages are mostly app/config/router setup.
+I was tempted to add tests to controllers, but it got larger than expected, so I will be skipping that since the email said the prompt should only take 60-90 minutes.
 
 Having the database running with docker compose is required.
 
@@ -71,6 +72,9 @@ Again, I did not add pagination to start, but if a business case required it (ta
 The prompt mentioned the way to get available appointments:
 1. by trainer
 2. by start/end for a trainer
+
+Get available appointments was a little tricky because we know what's scheduled, but I didn't want to loop through too many times to build time slots.
+I took the unix time of start:end and used that as a way to track what timeslots are unavailable as I built the list of available timeslots
 
 The response will use the same object as List Scheduled Appointments, except it will omit the user ID
 
