@@ -50,12 +50,29 @@ It should be straightforward overall. One query inserts unless there is a constr
 I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 ### API Endpoints
-#### Get Appointments
-The prompt mentioned two ways to get appointments
+#### Get Scheduled Appointments
+The prompt mentioned ~two ways~ the way to get appointments by only #1 below, but I added #2 because I misread!
 1. by trainer
 2. by start/end for a trainer
 
-This will only need one endpoint. It will work well as a list endpoint with query params, and based on what query params is how it's filtered when querying the database.
+This endpoint accepts query params, and based on what query params is how the response is filtered when querying the database.
+
+If there are additional query params added that are unexpected, they will be ignored.
+
+If there are no params submitted, it will return all appointments
+
+The accepted time format for start/end params is`time.RFC3339`
+
+`Times returned are in UTC... It felt normal to do that than to make all times Pacific`
+
+Again, I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
+
+#### Get Available Appointments
+The prompt mentioned the way to get available appointments:
+1. by trainer
+2. by start/end for a trainer
+
+The response will use the same object as List Scheduled Appointments, except it will omit the user ID
 
 If there are additional query params added that are unexpected, they will be ignored.
 
@@ -71,6 +88,8 @@ My assumption is that you can list appointments that a trainer is available and 
 This should be relatively safe to just create any appointment, but as a safety net, there will be no double-booked appointments with the unique index set in the table
 
 Validation that it is a 30-minute time slot that starts or ends on 00 and 30 will be validated in the controller and the repo layer will insert what ever it is given
+
+Times returned are in UTC... It felt normal to do that than to make all times Pacific
 
 The accepted time format via API is `time.RFC3339`
 

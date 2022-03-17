@@ -116,3 +116,81 @@ func TestAppointmentRepository_CreateAppointment(t *testing.T) {
 		})
 	}
 }
+
+func TestAppointmentRepository_GetScheduledAppointments(t *testing.T) {
+	type args struct {
+		appointments []models.AppointmentCreateRequest
+	}
+
+	tests := []struct {
+		name    string
+		args    args
+		want    models.Appointment
+		wantErr bool
+	}{
+		{
+			name: "happy path",
+			want: models.Appointment{
+				ID:        1,
+				TrainerID: 1,
+				UserID:    1,
+				StartsAt:  time.Date(2022, 03, 17, 12, 0, 0, 0, time.UTC),
+				EndsAt:    time.Date(2022, 03, 17, 12, 30, 0, 0, time.UTC),
+			},
+			args: args{
+				appointments: []models.AppointmentCreateRequest{
+					{
+						TrainerID: 1,
+						UserID:    1,
+						StartsAt:  time.Date(2022, 03, 17, 12, 0, 0, 0, time.UTC),
+						EndsAt:    time.Date(2022, 03, 17, 12, 30, 0, 0, time.UTC),
+					},
+				},
+			},
+		},
+		{
+			name: "error time slot already exists",
+			want: models.Appointment{
+				ID:        1,
+				TrainerID: 1,
+				UserID:    1,
+				StartsAt:  time.Date(2022, 03, 17, 12, 0, 0, 0, time.UTC),
+				EndsAt:    time.Date(2022, 03, 17, 12, 30, 0, 0, time.UTC),
+			},
+			wantErr: true,
+			args: args{
+				appointments: []models.AppointmentCreateRequest{
+					{
+						TrainerID: 1,
+						UserID:    1,
+						StartsAt:  time.Date(2022, 03, 17, 12, 0, 0, 0, time.UTC),
+						EndsAt:    time.Date(2022, 03, 17, 12, 30, 0, 0, time.UTC),
+					},
+					{
+						TrainerID: 2,
+						UserID:    2,
+						StartsAt:  time.Date(2022, 03, 17, 12, 0, 0, 0, time.UTC),
+						EndsAt:    time.Date(2022, 03, 17, 12, 30, 0, 0, time.UTC),
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			PurgeTables()
+
+			r := &AppointmentsRepoType{
+				db: DB,
+			}
+
+			for _, appt := range tt.args.appointments {
+				got, err := r.CreateAppointment(context.Background(), appt)
+				fmt.Printf("%#v", got)
+				if err != nil {
+					t.Fatal(err)
+				}
+			}
+		})
+	}
+}
