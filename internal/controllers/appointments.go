@@ -46,13 +46,13 @@ func (a *V1AppointmentsController) CreateAppointment(w http.ResponseWriter, r *h
 
 	err = validateRequest(newAppointment)
 
-	user, err := a.repo.CreateAppointment(ctx, newAppointment)
+	appointment, err := a.repo.CreateAppointment(ctx, newAppointment)
 	if err != nil {
 		respondError(ctx, w, http.StatusInternalServerError, err.Error(), err)
 		return
 	}
 
-	respondModel(ctx, w, http.StatusCreated, user)
+	respondModel(ctx, w, http.StatusCreated, appointment)
 	return
 }
 
@@ -107,13 +107,13 @@ func (a *V1AppointmentsController) ListAppointments(w http.ResponseWriter, r *ht
 		return
 	}
 
-	user, err := a.repo.GetAppointments(ctx, trainerID, startsAt, endsAt)
+	appointments, err := a.repo.GetAppointments(ctx, trainerID, startsAt, endsAt)
 	if err != nil {
 		respondError(ctx, w, http.StatusInternalServerError, "lmfao something happened", err)
 		return
 	}
 
-	respondModel(ctx, w, http.StatusOK, user)
+	respondModel(ctx, w, http.StatusOK, appointments)
 	return
 }
 

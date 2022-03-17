@@ -20,6 +20,6 @@ func NewV1Router(c *configuration.AppConfig, uRepo repo.AppointmentsRepoType) V1
 func (v *V1Router) Register(root *mux.Router) {
 	r := root.PathPrefix("/v1").Subrouter()
 
-	usersController := controllers.NewV1AppointmentsController(v.config, v.uRepo)
-	usersController.RegisterRoutes(r)
+	appointmentsController := controllers.NewV1AppointmentsController(v.config, v.uRepo)
+	appointmentsController.RegisterRoutes(r)
 }

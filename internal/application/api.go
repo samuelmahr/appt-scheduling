@@ -26,9 +26,9 @@ func NewAPIApplication(c *configuration.AppConfig) *APIApplication {
 	db.SetMaxIdleConns(c.PostgresMaxIdleConns)
 	db.SetMaxOpenConns(c.PostgresMaxOpenConns)
 
-	userRepo := repo.NewUsersRepository(db)
+	appointmentsRepo := repo.NewAppointmentsRepository(db)
 	rootRouter := mux.NewRouter()
-	r := routers.NewV1Router(c, userRepo)
+	r := routers.NewV1Router(c, appointmentsRepo)
 	r.Register(rootRouter)
 
 	srv := &http.Server{

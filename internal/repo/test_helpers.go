@@ -113,6 +113,12 @@ func PurgeTables() {
 		}
 		return nil
 	})
+	withTimeout(time.Second*2, func() error {
+		if _, err := DB.Exec("ALTER SEQUENCE scheduling.appointments_id_seq RESTART WITH 1;"); err != nil {
+			return err
+		}
+		return nil
+	})
 }
 
 func withTimeout(timeout time.Duration, work func() error) {

@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-type UsersRepository interface {
+type AppointmentsRepository interface {
 	CreateAppointment(ctx context.Context, newUser models.AppointmentCreateRequest) (models.Appointment, error)
 	GetAppointments(ctx context.Context, tID int64, startsAt time.Time, endsAt time.Time) ([]models.Appointment, error)
 }
@@ -19,7 +19,7 @@ type AppointmentsRepoType struct {
 	db *sqlx.DB
 }
 
-func NewUsersRepository(db *sqlx.DB) AppointmentsRepoType {
+func NewAppointmentsRepository(db *sqlx.DB) AppointmentsRepoType {
 	return AppointmentsRepoType{
 		db: db,
 	}
@@ -28,7 +28,7 @@ func NewUsersRepository(db *sqlx.DB) AppointmentsRepoType {
 const createAppointmentQuery = `
 insert into scheduling.appointments(trainer_id, user_id, starts_at, ends_at)
 VALUES ($1, $2, $3, $4)
-returning id trainer_id, user_id, starts_at, ends_at, created_at, updated_at, canceled_at
+returning id, trainer_id, user_id, starts_at, ends_at, created_at, updated_at, canceled_at
 `
 
 func (ar *AppointmentsRepoType) CreateAppointment(ctx context.Context, newAppt models.AppointmentCreateRequest) (models.Appointment, error) {
@@ -36,7 +36,7 @@ func (ar *AppointmentsRepoType) CreateAppointment(ctx context.Context, newAppt m
 	err := ar.db.QueryRowx(createAppointmentQuery, newAppt.TrainerID, newAppt.UserID, newAppt.StartsAt, newAppt.EndsAt).StructScan(&a)
 
 	if err != nil {
-		return models.Appointment{}, errors.Wrap(err, "error creating user")
+		return models.Appointment{}, errors.Wrap(err, "error creating appointment")
 	}
 
 	return a, nil

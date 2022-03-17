@@ -10,14 +10,18 @@
 
 ## Design Considerations & More
 ### Project Structure
-This is basically how I'm used writing Go applications,
-except for models package. I just wanted to separate out structs and see if I like it better this way.
+This is basically how I'm used writing Go applications, except for models package. I just wanted to separate out structs and see if I like it better this way.
+
+In a larger service, there may be multiple objects that would make this project structure make more sense. 
+It's a little overkill for this project, but it can be expanded on just for fun (add users table, trainers table, etc)
 
 ### Testing
 Unit tests mock most interfaces except for code that actually accesses data (`repo` package)
 
 Code hitting the database does have unit tests that will persist data into the table.
 I prefer to ensure interactions with the database work as expected.
+
+I am only testing the controller package and repo package. The other packages are mostly app/config/router setup.
 
 Having the database running with docker compose is required.
 
@@ -69,3 +73,5 @@ This should be relatively safe to just create any appointment, but as a safety n
 Validation that it is a 30-minute time slot that starts or ends on 00 and 30 will be validated in the controller and the repo layer will insert what ever it is given
 
 The accepted time format via API is `time.RFC3339`
+
+API Response will echo the appointment that was just created
