@@ -2,32 +2,18 @@
 
 ## Setup
 - `docker compose up` will stand up database
-- Load `appointments.json`:
+- Two options to load `appointments.json`:
   - From root directory run `go run ./scripts/initial_db_load.go` (uses libraries sqlx and squirrel)
   - Load however you know how to load a db 
 - Run `./cmd/api/main.go` to start up the API
 - Test with `http://localhost:8000`
+- Endpoints are listed in API Endpoints section below
 
 ## Design Considerations & More
-### Project Structure
-This is basically how I'm used writing Go applications, except for models package. I just wanted to separate out structs and see if I like it better this way.
-
-In a larger service, there may be multiple objects that would make this project structure make more sense. 
-It's a little overkill for this project, but it can be expanded on just for fun (add users table, trainers table, etc)
-
-### Testing
-Normally I would have unit tests mock most interfaces except for code that actually accesses data (`repo` package)
-
-Code hitting the database does have unit tests that will persist data into the table.
-I prefer to ensure interactions with the database work as expected.
-
-I am only testing the repo package just for read/write sanity. Ignoring the controller package, the other packages are mostly app/config/router setup.
-I was tempted to add tests to controllers, but it got larger than expected, so I will be skipping that since the email said the prompt should only take 60-90 minutes.
-
-Having the database running with docker compose is required.
-
 ### Data Model
-The db name, schema name, and table name were hard to do because naming is hard! Really, just named so it wasn't database appointments, schema appointments, and table appointments
+I went with a postgres table in order to represent an API data store rather than updating the original file.
+
+The db name, schema name, and table name were hard to do because naming is hard! Really, just named, so it wasn't database appointments, schema appointments, and table appointments
 The main table has 3 extra columns that aren't in the json file example:
 1. `created_at`
 2. `updated_at`
@@ -41,16 +27,6 @@ This unique index will be helpful when searching for a trainer's specific availa
 Due to preloading the appointment data from `appointments.json`, the pkey sequence may be incorrect (starting at ID 1 when it already exists) so I restarted it at 1000 for the primary key in the initial db migration
 
 Additional indexes I would consider for the future is an index on `user_id` and an index on `trainer_id`, but it's not necessary for this exercise
-
-### Data Access
-I went with a postgres table in order to represent an API data store rather than updating the original file.
-In the code, you may see I have a written out query for the insert, and I am using squirrel to build the List query.
-1. I prefer queries to be written out, so you know what is actually being run
-2. If I can't dynamically build a query (in a pretty manner), it's nice to use squirrel help dynamically build queries
-
-It should be straightforward overall. One query inserts unless there is a constraint, while the query gets a list of data.
-
-I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 ### API Endpoints
 #### Get Scheduled Appointments
@@ -112,7 +88,34 @@ The accepted time format via API is `time.RFC3339`
 
 API Response will echo the appointment that was just created
 
-For the case the time slot is already booked, it returns a db specific error in the API. If I spent more time on it, I'd fix the error handling
+For the case the time slot is already booked, it returns a db specific error in the API. 
+If I spent more time on it, I'd fix the error handling to return a more user-friendly error
+
+### Project Structure
+This is basically how I'm used writing Go applications, except for models package. I just wanted to separate out structs and see if I like it better this way.
+
+In a larger service, there may be multiple objects that would make this project structure make more sense.
+It's a little overkill for this project, but it can be expanded on just for fun (add users table, trainers table, etc)
+
+### Testing
+Normally I would have unit tests mock most interfaces except for code that actually accesses data (`repo` package)
+
+Code hitting the database does have unit tests that will persist data into the table.
+I prefer to ensure interactions with the database work as expected.
+
+I am only testing the repo package just for read/write sanity. Ignoring the controller package, the other packages are mostly app/config/router setup.
+I was tempted to add tests to controllers, but it got larger than expected, so I will be skipping that since the email said the prompt should only take 60-90 minutes.
+
+Having the database running with docker compose is required.
+
+### Data Access
+In the code, you may see I have a written out query for the insert, and I am using squirrel to build the List query.
+1. I prefer queries to be written out, so you know what is actually being run
+2. If I can't dynamically build a query (in a pretty manner), it's nice to use squirrel help dynamically build queries
+
+It should be straightforward overall. One query inserts unless there is a constraint, while the query gets a list of data.
+
+I did not add pagination to start, but if a business case required it (tables to display), then I would add it in
 
 ## Smoke Test
 Ran a smoke test, and it appeared to work as expected.
