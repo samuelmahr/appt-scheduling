@@ -1,0 +1,32 @@
+version: '2.1'
+
+services:
+  database:
+    image: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=Passw0rd
+      - POSTGRES_USER=master
+      - POSTGRES_DB=appointments
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "appointments", "-h", "localhost" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+  migrate:
+    image: migrate/migrate
+    depends_on:
+      database:
+        condition: service_healthy
+    volumes:
+      - ./migrations:/migrations
+    command: ["-path=/migrations/", "-database", "postgres://master:Passw0rd@database:5432/appointments?sslmode=disable", "up"]
+  test_db:
+    image: postgres
+    command: createdb -U master -h database appointments_test
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: Passw0rd
