@@ -16,13 +16,13 @@ import (
 
 type V1AppointmentsController struct {
 	config *configuration.AppConfig
-	repo   repo.AppointmentsRepoType
+	repo   repo.AppointmentsRepository
 }
 
-func NewV1AppointmentsController(c *configuration.AppConfig, uRepo repo.AppointmentsRepoType) V1AppointmentsController {
+func NewV1AppointmentsController(c *configuration.AppConfig, aRepo repo.AppointmentsRepository) V1AppointmentsController {
 	return V1AppointmentsController{
 		config: c,
-		repo:   uRepo,
+		repo:   aRepo,
 	}
 }
 
@@ -44,7 +44,7 @@ func (a *V1AppointmentsController) CreateAppointment(w http.ResponseWriter, r *h
 
 	err = validateRequest(newAppointment)
 	if err != nil {
-		respondError(ctx, w, http.StatusBadRequest, "bad request payload, check required fields", err)
+		respondError(ctx, w, http.StatusBadRequest, "bad request payload, check times", err)
 		return
 	}
 
@@ -88,8 +88,8 @@ func validateTimeSlot(startsAt time.Time, endsAt time.Time) error {
 		return errors.New("invalid time slot, must be 30 minutes")
 	}
 
-	if isValidSlot(startsAt) && startsWithinBusinessHours(startsAt, loc) {
-		return errors.New("invalid end date/time, must end at 00 or 30 minutes")
+	if !isValidSlot(startsAt) && !startsWithinBusinessHours(startsAt, loc) {
+		return errors.New("invalid start/end datetime ")
 	}
 
 	return nil
