@@ -3,6 +3,7 @@ module github.com/samuelmahr/appt-scheduling
 go 1.18
 
 require (
+	github.com/Masterminds/squirrel v1.5.2
 	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/gorilla/mux v1.8.0
 	github.com/jmoiron/sqlx v1.3.4
@@ -14,7 +15,6 @@ require (
 )
 
 require (
-	github.com/Masterminds/squirrel v1.5.2 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
 	github.com/google/go-github/v35 v35.2.0 // indirect
