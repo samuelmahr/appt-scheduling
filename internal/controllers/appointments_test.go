@@ -75,6 +75,47 @@ func TestV1Appointments_CreateAppointment(t *testing.T) {
 			response: http.StatusCreated,
 		},
 		{
+			name: "fail missing user id",
+			args: args{
+				ctx: context.TODO(),
+				request: []byte(`{
+					"trainer_id": 1,
+					"starts_at": "2022-03-17T19:00:00Z",
+					"ends_at": "2022-03-17198:30:00Z"
+				}`),
+				aRepo: repo.MockAppointments{},
+			},
+			response: http.StatusBadRequest,
+			errMsg:   "bad request payload",
+		},
+		{
+			name: "fail missing trainer id",
+			args: args{
+				ctx: context.TODO(),
+				request: []byte(`{
+					"user_id": 1,
+					"starts_at": "2022-03-17T19:00:00Z",
+					"ends_at": "2022-03-17198:30:00Z"
+				}`),
+				aRepo: repo.MockAppointments{},
+			},
+			response: http.StatusBadRequest,
+			errMsg:   "bad request payload",
+		},
+		{
+			name: "fail missing times",
+			args: args{
+				ctx: context.TODO(),
+				request: []byte(`{
+					"user_id": 1,
+					"trainer_id": 1,
+				}`),
+				aRepo: repo.MockAppointments{},
+			},
+			response: http.StatusBadRequest,
+			errMsg:   "bad request payload",
+		},
+		{
 			name: "fail outside business hours",
 			args: args{
 				ctx: context.TODO(),
