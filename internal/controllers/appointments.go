@@ -154,7 +154,7 @@ func (a *V1AppointmentsController) ListAvailableAppointments(w http.ResponseWrit
 	}
 
 	if startsAt.IsZero() || endsAt.IsZero() {
-		respondError(ctx, w, http.StatusBadRequest, "invalid time range is required", err)
+		respondError(ctx, w, http.StatusBadRequest, "invalid, time range is required", err)
 		return
 	}
 

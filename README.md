@@ -115,7 +115,9 @@ Code hitting the database does have unit tests that will persist data into the t
 I prefer to ensure interactions with the database work as expected.
 
 I am only testing the repo package just for read/write sanity. Ignoring the controller package, the other packages are mostly app/config/router setup.
-I was tempted to add tests to controllers, but it was going to take more time than I wanted
+
+There are tests in controller package, hitting 81.8% code coverage. 
+Tests are mainly for obvious issues like invalid requests and happy path
 
 Having the database running with docker compose is required.
 
