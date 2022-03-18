@@ -22,3 +22,5 @@ type AppointmentCreateRequest struct {
 	StartsAt  time.Time `json:"starts_at" db:"starts_at"`
 	EndsAt    time.Time `json:"ends_at" db:"ends_at"`
 }
+
+// TODO: refactor validation in controller func as methods on AppointmentCreateRequest struct
