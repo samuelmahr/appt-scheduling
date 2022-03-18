@@ -3,14 +3,14 @@
 # Table of Contents
 - [Setup](#setup)
 - [Design Considerations & More](#design-considerations--more)
-- [Data Model](#data-model)
-- [API](#api)
-- [Get Scheduled Appointments](#get-scheduled-appointments)
-- [Get Available Appointments](#get-available-appointments)
-- [Create Appointment](#create-appointment)
-- [Project Structure](#project-structure)
-- [Testing](#testing)
-- [Data Access](#data-access)
+  - [Data Model](#data-model)
+  - [API](#api)
+    - [Get Scheduled Appointments](#get-scheduled-appointments)
+    - [Get Available Appointments](#get-available-appointments)
+    - [Create Appointment](#create-appointment)
+  - [Project Structure](#project-structure)
+  - [Testing](#testing)
+  - [Data Access](#data-access)
 - [Smoke Test](#smoke-test)
 
 ## Setup
