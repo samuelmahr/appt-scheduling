@@ -1,5 +1,18 @@
 # Appointment Scheduling
 
+# Table of Contents
+- [Setup](#setup)
+- [Design Considerations & More](#design-considerations--more)
+- [Data Model](#data-model)
+- [API](#api)
+- [Get Scheduled Appointments](#get-scheduled-appointments)
+- [Get Available Appointments](#get-available-appointments)
+- [Create Appointment](#create-appointment)
+- [Project Structure](#project-structure)
+- [Testing](#testing)
+- [Data Access](#data-access)
+- [Smoke Test](#smoke-test)
+
 ## Setup
 - `docker compose up` will stand up database
 - Two options to load `appointments.json`:
@@ -28,7 +41,7 @@ Due to preloading the appointment data from `appointments.json`, the pkey sequen
 
 Additional indexes I would consider for the future is an index on `user_id` and an index on `trainer_id`, but it's not necessary for this exercise
 
-### API Endpoints
+### API
 API documentation is in `./docs/api.yml`. The main thing documented are happy paths, error responses are not in the docs
 
 #### Get Scheduled Appointments
@@ -129,7 +142,7 @@ In the code, you may see I have a written out query for the insert, and I am usi
 It should be straightforward overall. One query inserts unless there is a constraint, while the query gets a list of data.
 
 ## Smoke Test
-Ran a smoke test, and it appeared to work as expected.
+Ran a smoke test for simple happy path scenario, and it appeared to work as expected.
 1. Call scheduled endpoint to see what is scheduled, make sure data is returned with different filters
 2. Call available endpoint to see what time slots are available (around the time slots in `appointments.json`)
 3. Call POST to create an appointment with a time slot available from #2, added user_id, and it created
